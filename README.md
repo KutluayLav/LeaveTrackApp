@@ -54,22 +54,84 @@ leavetrackapp/
 │   ├── src/main/java/
 │   │   └── com/kutluayulutas/leavetrack/
 │   │       ├── controller/     # REST Controllers
+│   │       │   ├── AuthController.java
+│   │       │   ├── LeaveController.java
+│   │       │   ├── LeaveAdminController.java
+│   │       │   ├── UserController.java
+│   │       │   └── DepartmentController.java
 │   │       ├── service/        # Business Logic
+│   │       │   ├── AuthService.java
+│   │       │   ├── LeaveService.java
+│   │       │   ├── UserService.java
+│   │       │   ├── DepartmentService.java
+│   │       │   └── RefreshTokenService.java
 │   │       ├── repository/     # Data Access
+│   │       │   ├── UserRepository.java
+│   │       │   ├── LeaveRepository.java
+│   │       │   ├── DepartmentRepository.java
+│   │       │   └── RefreshTokenRepository.java
 │   │       ├── model/          # Entities
+│   │       │   ├── User.java
+│   │       │   ├── Leave.java
+│   │       │   ├── Department.java
+│   │       │   ├── RefreshToken.java
+│   │       │   ├── Role.java
+│   │       │   ├── LeaveType.java
+│   │       │   └── LeaveStatus.java
 │   │       ├── dto/            # Data Transfer Objects
+│   │       │   ├── request/    # Request DTOs
+│   │       │   │   ├── LoginRequest.java
+│   │       │   │   ├── RegisterRequest.java
+│   │       │   │   ├── LeaveRequestDTO.java
+│   │       │   │   └── TokenRefreshRequest.java
+│   │       │   └── response/   # Response DTOs
+│   │       │       ├── AuthResponse.java
+│   │       │       ├── UserDTO.java
+│   │       │       ├── LeaveDTO.java
+│   │       │       ├── DepartmentDTO.java
+│   │       │       └── SuccessResponse.java
+│   │       ├── mapper/         # Entity to DTO Mappers
+│   │       │   ├── UserMapper.java
+│   │       │   ├── LeaveMapper.java
+│   │       │   └── DepartmentMapper.java
+│   │       ├── exception/      # Custom Exceptions
+│   │       │   ├── GlobalExceptionHandler.java
+│   │       │   ├── CustomAuthenticationException.java
+│   │       │   ├── LeaveLimitExceededException.java
+│   │       │   ├── InvalidDateRangeException.java
+│   │       │   ├── LeaveNotFoundException.java
+│   │       │   ├── EmailAlreadyUsedException.java
+│   │       │   └── NotFoundException.java
 │   │       ├── security/       # JWT & Security
-│   │       └── config/         # Configuration
-│   └── src/main/resources/
-│       └── application.properties
+│   │       │   ├── JwtTokenProvider.java
+│   │       │   ├── JwtAuthenticationFilter.java
+│   │       │   ├── SecurityConfig.java
+│   │       │   └── UserDetailsServiceImpl.java
+│   │       ├── config/         # Configuration
+│   │       │   ├── LeaveConfig.java
+│   │       │   └── AsyncConfig.java
+│   │       └── LeavetrackApplication.java
+│   ├── src/main/resources/
+│   │   ├── application.properties
+│   │   └── data.sql
+│   └── pom.xml
 └── leavetrack-frontend/        # Next.js Frontend
     ├── src/
     │   ├── app/               # App Router pages
-    │   ├── components/        # React components
-    │   ├── services/          # API services
+    │   │   ├── page.tsx       # Home page
+    │   │   ├── login/         # Login page
+    │   │   ├── dashboard/     # User dashboard
+    │   │   ├── admin/         # Admin dashboard
+    │   │   └── leaves/        # Leave management
     │   ├── contexts/          # React contexts
+    │   │   └── AuthContext.tsx
+    │   ├── services/          # API services
+    │   │   └── api.ts
     │   └── types/             # TypeScript types
-    └── package.json
+    │       └── index.ts
+    ├── public/                # Static assets
+    ├── package.json
+    └── README.md
 ```
 
 ## 🚀 Getting Started
@@ -79,6 +141,62 @@ leavetrackapp/
 - Node.js 18+
 - MS SQL Server
 - Maven
+
+### 📁 Backend Architecture
+
+#### **Controller Layer** (`controller/`)
+- **AuthController**: Login, logout, token refresh
+- **LeaveController**: Leave CRUD operations, filtering, summary
+- **LeaveAdminController**: Admin-specific leave configuration
+- **UserController**: User management (Admin only)
+- **DepartmentController**: Department management
+
+#### **Service Layer** (`service/`)
+- **AuthService**: Authentication and user management
+- **LeaveService**: Business logic for leave operations
+- **UserService**: User CRUD operations
+- **DepartmentService**: Department operations
+- **RefreshTokenService**: JWT refresh token management
+
+#### **Repository Layer** (`repository/`)
+- **UserRepository**: User data access
+- **LeaveRepository**: Leave data access with custom queries
+- **DepartmentRepository**: Department data access
+- **RefreshTokenRepository**: Refresh token data access
+
+#### **Model Layer** (`model/`)
+- **User**: User entity with roles and department
+- **Leave**: Leave request entity with status tracking
+- **Department**: Department entity
+- **RefreshToken**: JWT refresh token entity
+- **Role**: User role enumeration
+- **LeaveType**: Leave type enumeration
+- **LeaveStatus**: Leave status enumeration
+
+#### **DTO Layer** (`dto/`)
+- **Request DTOs**: Input validation and data transfer
+- **Response DTOs**: Structured API responses
+- **SuccessResponse**: Standardized response wrapper
+
+#### **Mapper Layer** (`mapper/`)
+- **UserMapper**: User entity ↔ UserDTO conversion
+- **LeaveMapper**: Leave entity ↔ LeaveDTO conversion
+- **DepartmentMapper**: Department entity ↔ DepartmentDTO conversion
+
+#### **Exception Layer** (`exception/`)
+- **GlobalExceptionHandler**: Centralized error handling
+- **Custom Exceptions**: Domain-specific error types
+- **Validation Exceptions**: Input validation errors
+
+#### **Security Layer** (`security/`)
+- **JwtTokenProvider**: JWT token generation and validation
+- **JwtAuthenticationFilter**: JWT authentication filter
+- **SecurityConfig**: Spring Security configuration
+- **UserDetailsServiceImpl**: Custom user details service
+
+#### **Configuration Layer** (`config/`)
+- **LeaveConfig**: Leave system configuration
+- **AsyncConfig**: Asynchronous processing configuration
 
 ### Backend Setup
 
@@ -113,6 +231,31 @@ leavetrackapp/
    ```bash
    npm run dev
    ```
+
+### 📱 Frontend Architecture
+
+#### **App Router** (`app/`)
+- **page.tsx**: Home page with routing logic
+- **login/page.tsx**: Authentication page
+- **dashboard/page.tsx**: User dashboard with leave summary
+- **admin/page.tsx**: Admin dashboard with management tools
+- **leaves/page.tsx**: Leave list and management
+- **leaves/new/page.tsx**: New leave request form
+
+#### **Context Layer** (`contexts/`)
+- **AuthContext**: Global authentication state management
+- **User state**: Current user information
+- **Token management**: JWT token handling
+
+#### **Service Layer** (`services/`)
+- **api.ts**: Axios HTTP client with interceptors
+- **Token refresh**: Automatic token renewal
+- **Error handling**: Centralized error management
+
+#### **Type System** (`types/`)
+- **index.ts**: TypeScript interfaces and types
+- **API types**: Request/response type definitions
+- **Component props**: React component type definitions
 
 ## 🔐 Authentication
 
